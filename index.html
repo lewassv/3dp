@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anatomi Tumbuhan 3D Interaktif | HTML5 & Three.js</title>
+    <meta name="description" content="Media Pembelajaran Interaktif 3D Bagian-Bagian Tumbuhan. Siap salin-rekat (copy-paste) untuk project web Anda.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Canvas 3D Container -->
+    <div id="canvas-container"></div>
+
+    <!-- 3D HTML Annotation Overlay Labels -->
+    <div id="annotations-container">
+        <div class="annotation-tag" id="tag-flower" data-part="flower">
+            <div class="tag-dot"></div>
+            <div class="tag-label"><i class="fa-solid fa-seedling"></i> Bunga</div>
+        </div>
+        <div class="annotation-tag" id="tag-fruit" data-part="fruit">
+            <div class="tag-dot"></div>
+            <div class="tag-label"><i class="fa-solid fa-apple-whole"></i> Buah</div>
+        </div>
+        <div class="annotation-tag" id="tag-leaf" data-part="leaf">
+            <div class="tag-dot"></div>
+            <div class="tag-label"><i class="fa-solid fa-leaf"></i> Daun</div>
+        </div>
+        <div class="annotation-tag" id="tag-stem" data-part="stem">
+            <div class="tag-dot"></div>
+            <div class="tag-label"><i class="fa-solid fa-bars-staggered"></i> Batang</div>
+        </div>
+        <div class="annotation-tag" id="tag-root" data-part="root">
+            <div class="tag-dot"></div>
+            <div class="tag-label"><i class="fa-solid fa-route"></i> Akar</div>
+        </div>
+    </div>
+
+    <!-- UI App Header -->
+    <header class="app-header">
+        <div class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-plant-wilt"></i></div>
+            <div class="logo-text">
+                <h1>Plant3D <span class="badge">PRO</span></h1>
+                <p>Anatomi Tumbuhan Interaktif</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button id="openCopyModalBtn" class="btn btn-emerald pulse">
+                <i class="fa-solid fa-code"></i> Salin Kode 3D
+            </button>
+            <button id="resetCamHeaderBtn" class="btn btn-icon" title="Reset Kamera">
+                <i class="fa-solid fa-arrows-to-eye"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Floating Navigation Left Sidebar -->
+    <aside class="left-panel glass-card">
+        <div class="panel-header">
+            <h3><i class="fa-solid fa-layer-group"></i> Bagian Tumbuhan</h3>
+            <p>Klik bagian untuk fokus & detail</p>
+        </div>
+
+        <nav class="parts-nav">
+            <button class="nav-btn active" data-part="all">
+                <div class="nav-btn-icon"><i class="fa-solid fa-globe"></i></div>
+                <div class="nav-btn-info">
+                    <span class="title">Seluruh Tumbuhan</span>
+                    <span class="desc">Tampilan Utuh</span>
+                </div>
+            </button>
+            <button class="nav-btn" data-part="flower">
+                <div class="nav-btn-icon flower-icon"><i class="fa-solid fa-fan"></i></div>
+                <div class="nav-btn-info">
+                    <span class="title">Bunga (Flower)</span>
+                    <span class="desc">Organ Reproduksi</span>
+                </div>
+            </button>
+            <button class="nav-btn" data-part="fruit">
+                <div class="nav-btn-icon fruit-icon"><i class="fa-solid fa-apple-whole"></i></div>
+                <div class="nav-btn-info">
+                    <span class="title">Buah & Biji (Fruit)</span>
+                    <span class="desc">Penyebar Biji</span>
+                </div>
+            </button>
+            <button class="nav-btn" data-part="leaf">
+                <div class="nav-btn-icon leaf-icon"><i class="fa-solid fa-leaf"></i></div>
+                <div class="nav-btn-info">
+                    <span class="title">Daun (Leaves)</span>
+                    <span class="desc">Fotosintesis</span>
+                </div>
+            </button>
+            <button class="nav-btn" data-part="stem">
+                <div class="nav-btn-icon stem-icon"><i class="fa-solid fa-bars-staggered"></i></div>
+                <div class="nav-btn-info">
+                    <span class="title">Batang (Stem)</span>
+                    <span class="desc">Penyokong & Pembuluh</span>
+                </div>
+            </button>
+            <button class="nav-btn" data-part="root">
+                <div class="nav-btn-icon root-icon"><i class="fa-solid fa-route"></i></div>
+                <div class="nav-btn-info">
+                    <span class="title">Akar (Roots)</span>
+                    <span class="desc">Penyerap Air & Hara</span>
+                </div>
+            </button>
+        </nav>
+
+        <div class="view-controls">
+            <label class="control-toggle">
+                <span><i class="fa-solid fa-wind"></i> Animasi Angin</span>
+                <input type="checkbox" id="windToggle" checked>
+                <span class="switch-slider"></span>
+            </label>
+            <label class="control-toggle">
+                <span><i class="fa-solid fa-eye"></i> X-Ray / Transparan</span>
+                <input type="checkbox" id="xrayToggle">
+                <span class="switch-slider"></span>
+            </label>
+            <label class="control-toggle">
+                <span><i class="fa-solid fa-border-none"></i> Wireframe Mode</span>
+                <input type="checkbox" id="wireframeToggle">
+                <span class="switch-slider"></span>
+            </label>
+        </div>
+    </aside>
+
+    <!-- Information Card Panel Right Side -->
+    <section class="info-panel glass-card" id="infoPanel">
+        <div class="info-header">
+            <span class="category-tag" id="infoCategory">Anatomi Utama</span>
+            <h2 id="infoTitle">Tumbuhan Utuh (Plant Structure)</h2>
+        </div>
+        
+        <div class="info-content">
+            <p class="summary-text" id="infoSummary">
+                Tumbuhan adalah organisme multiseluler kompleks yang terdiri dari organ utama: Akar, Batang, Daun, Bunga, dan Buah. Setiap organ bekerja secara harmonis untuk pertumbuhan, fotosintesis, dan keberlangsungan spesies.
+            </p>
+
+            <div class="info-section">
+                <h4><i class="fa-solid fa-circle-check"></i> Fungsi Utama</h4>
+                <ul class="feature-list" id="infoFunctions">
+                    <li><strong>Penyerapan & Transpor:</strong> Mengambil air & hara dari tanah ke seluruh jaringan.</li>
+                    <li><strong>Fotosintesis:</strong> Mengubah energi matahari menjadi makanan (glukosa) dan oksigen.</li>
+                    <li><strong>Reproduksi:</strong> Menghasilkan bunga, buah, dan biji untuk perkembangbiakan.</li>
+                </ul>
+            </div>
+
+            <div class="info-section">
+                <h4><i class="fa-solid fa-microscope"></i> Struktur Mikroskopis / Jaringan</h4>
+                <div class="micro-box" id="infoMicro">
+                    <p><strong>Xilem & Floem:</strong> Pembuluh pengangkut air dari akar dan hasil fotosintesis dari daun.</p>
+                </div>
+            </div>
+
+            <div class="fact-box">
+                <i class="fa-solid fa-lightbulb fact-icon"></i>
+                <div>
+                    <strong>Tahukah Kamu?</strong>
+                    <p id="infoFact">Lebih dari 80% nutrisi yang diserap tumbuhan berasal dari interaksi akar dengan mikoriza tanah!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom Controls & Hints -->
+    <div class="bottom-bar">
+        <div class="hint-pill">
+            <i class="fa-solid fa-hand-pointer"></i> Klik bagian 3D atau geser mouse untuk memutar kamera
+        </div>
+    </div>
+
+    <!-- Modal Copy Code (Salin Kode 3D) -->
+    <div class="modal-overlay" id="copyModal">
+        <div class="modal-content glass-card-modal">
+            <div class="modal-header">
+                <div>
+                    <h3><i class="fa-solid fa-code"></i> Salin Kode 3D Tumbuhan</h3>
+                    <p>Gunakan kode ini langsung di proyek HTML Anda tanpa file eksternal 3D!</p>
+                </div>
+                <button class="close-modal-btn" id="closeCopyModalBtn">&times;</button>
+            </div>
+
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="single">
+                    <i class="fa-solid fa-file-code"></i> Single HTML Standalone (1 File)
+                </button>
+                <button class="modal-tab" data-tab="modular">
+                    <i class="fa-solid fa-cubes"></i> Tiga File (HTML + CSS + JS)
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="code-preview-container">
+                    <pre><code id="codeSnippetText">Loading code...</code></pre>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <span class="copied-toast" id="copiedToast"><i class="fa-solid fa-check"></i> Berhasil Disalin!</span>
+                <button id="copySnippetBtn" class="btn btn-emerald">
+                    <i class="fa-solid fa-copy"></i> Salin Kode ke Clipboard
+                </button>
+                <a href="standalone.html" target="_blank" download="plant3d_standalone.html" class="btn btn-secondary">
+                    <i class="fa-solid fa-download"></i> Download HTML File
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js CDN & OrbitControls CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- App Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
